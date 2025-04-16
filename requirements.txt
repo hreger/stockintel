@@ -1,0 +1,30 @@
+# Data Processing and Analysis
+pandas>=1.5.0
+numpy>=1.21.0
+scipy>=1.7.0
+statsmodels>=0.13.0
+
+# Machine Learning
+tensorflow>=2.8.0
+scikit-learn>=1.0.0
+prophet>=1.0.0
+
+# Data Ingestion
+alpha_vantage>=2.3.1
+polygon-api-client>=1.10.0
+websockets>=10.0
+kafka-python>=2.0.2
+
+# Web Scraping
+beautifulsoup4>=4.9.0
+requests>=2.26.0
+
+# Database
+psycopg2-binary>=2.9.0
+sqlalchemy>=1.4.0
+
+# Utilities
+python-dotenv>=0.19.0
+pytest>=6.2.5
+black>=21.12b0
+flake8>=4.0.0 
