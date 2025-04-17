@@ -9,6 +9,8 @@
 - Risk Management Metrics
 - Efficient Frontier Optimization
 - Stress Testing Scenarios
+- Personalized User Onboarding
+- SHAP-based Model Explanations
 
 ## 🚀 Quick Start
 1. Install dependencies:
@@ -40,6 +42,8 @@ B --> C[LSTM Model]
 C --> D[Risk Calculator]
 D --> E[Portfolio Analyzer]
 E --> F[Dashboard]
+F --> G[Explainable AI]
+G --> H[User Onboarding]
 ```
 
 ## 🤖 Models Used
@@ -48,20 +52,46 @@ E --> F[Dashboard]
 | Price Prediction       | LSTM            | 89.2% MAE |
 | Risk Assessment        | Monte Carlo     | 92% CI    |
 | Portfolio Optimization | Markowitz       | N/A       |
+| Model Explanation      | SHAP            | N/A       |
 
-## 🎯 Phase 2 Features
-### Portfolio Analysis
-- Real-time portfolio performance tracking
-- Sector exposure analysis
-- Risk metrics visualization (VaR, Sharpe Ratio)
+## 🎯 Implementation Phases
+
+### Phase 1: Core Infrastructure (6 Weeks)
+- Real-time data pipeline with Kafka
+- Basic ARIMA predictions
+- Company profile scraper
+- Database setup with TimescaleDB
+
+### Phase 2: Portfolio Analysis (4 Weeks)
+- Portfolio performance tracking
+- Risk metrics visualization
 - Efficient frontier optimization
 - Stress testing scenarios
+- Sector exposure analysis
+- Interactive dashboard
 
-### Risk Management
-- Value at Risk (VaR) calculations
-- Portfolio stress testing
-- Sector diversification analysis
-- Risk-adjusted return metrics
+### Phase 3: User Experience (2 Weeks)
+- Explainable AI with SHAP values
+- User onboarding flow
+- Personalized recommendations
+- Risk tolerance assessment
+- Notification preferences
+- User configuration management
+
+## 🔍 Explainable AI Features
+- SHAP-based feature importance
+- Human-readable explanations
+- Technical indicator analysis
+- Risk factor breakdown
+- Model confidence metrics
+
+## 👤 User Onboarding
+- Risk tolerance assessment
+- Investment horizon selection
+- Sector preferences
+- Watchlist management
+- Notification settings
+- Personalized portfolio recommendations
 
 ## 📜 License
 MIT License - See [LICENSE.md](LICENSE.md)
