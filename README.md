@@ -5,6 +5,10 @@
 - Company health reports (Revenue, Debt, Leadership)
 - Portfolio risk scoring (VaR, Sharpe Ratio)
 - Explainable AI: "Why this stock?" section
+- Portfolio Analysis Dashboard
+- Risk Management Metrics
+- Efficient Frontier Optimization
+- Stress Testing Scenarios
 
 ## 🚀 Quick Start
 1. Install dependencies:
@@ -23,13 +27,19 @@ POLYGON_KEY=your_key
 python data_ingestion/kafka_producer.py
 ```
 
+4. Start the dashboard:
+```bash
+python dashboard/app.py
+```
+
 ## 📊 Data Flow
 ```
 graph LR
 A[Market APIs] --> B{Kafka}
 B --> C[LSTM Model]
 C --> D[Risk Calculator]
-D --> E[React Dashboard]
+D --> E[Portfolio Analyzer]
+E --> F[Dashboard]
 ```
 
 ## 🤖 Models Used
@@ -37,6 +47,21 @@ D --> E[React Dashboard]
 |------------------------|-----------------|-----------|
 | Price Prediction       | LSTM            | 89.2% MAE |
 | Risk Assessment        | Monte Carlo     | 92% CI    |
+| Portfolio Optimization | Markowitz       | N/A       |
+
+## 🎯 Phase 2 Features
+### Portfolio Analysis
+- Real-time portfolio performance tracking
+- Sector exposure analysis
+- Risk metrics visualization (VaR, Sharpe Ratio)
+- Efficient frontier optimization
+- Stress testing scenarios
+
+### Risk Management
+- Value at Risk (VaR) calculations
+- Portfolio stress testing
+- Sector diversification analysis
+- Risk-adjusted return metrics
 
 ## 📜 License
 MIT License - See [LICENSE.md](LICENSE.md)
