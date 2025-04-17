@@ -1,6 +1,7 @@
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import pandas as pd
+import numpy as np
 from typing import Dict, List
 from portfolio.portfolio_analyzer import PortfolioAnalyzer
 

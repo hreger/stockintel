@@ -1,19 +1,111 @@
-import numpy as np
 import pandas as pd
-from typing import List, Dict, Tuple
+import numpy as np
+from typing import Dict, List, Optional, Tuple
+from datetime import datetime
 from scipy.optimize import minimize
 from scipy.stats import norm
 
 class PortfolioAnalyzer:
     def __init__(self):
+        self.positions: Dict[str, float] = {}  # symbol -> quantity
+        self.prices: Dict[str, float] = {}     # symbol -> current_price
+        self.historical_data: Dict[str, pd.DataFrame] = {}  # symbol -> historical price data
         self.risk_free_rate = 0.02  # 2% annual risk-free rate
     
-    def calculate_returns(self, prices: pd.DataFrame) -> pd.DataFrame:
-        """Calculate daily returns from price data"""
-        return prices.pct_change().dropna()
-    
-    def calculate_portfolio_metrics(self, weights: np.ndarray, returns: pd.DataFrame) -> Dict:
-        """Calculate portfolio metrics including expected return, volatility, and Sharpe ratio"""
+    def add_position(self, symbol: str, quantity: float, price: float):
+        """Add or update a position in the portfolio."""
+        self.positions[symbol] = quantity
+        self.prices[symbol] = price
+
+    def remove_position(self, symbol: str):
+        """Remove a position from the portfolio."""
+        if symbol in self.positions:
+            del self.positions[symbol]
+        if symbol in self.prices:
+            del self.prices[symbol]
+
+    def get_portfolio_value(self) -> float:
+        """Calculate total portfolio value."""
+        return sum(self.positions[symbol] * self.prices[symbol] 
+                  for symbol in self.positions)
+
+    def get_position_weights(self) -> Dict[str, float]:
+        """Calculate position weights in the portfolio."""
+        total_value = self.get_portfolio_value()
+        if total_value == 0:
+            return {symbol: 0 for symbol in self.positions}
+        
+        return {
+            symbol: (self.positions[symbol] * self.prices[symbol] / total_value)
+            for symbol in self.positions
+        }
+
+    def calculate_returns(self) -> Dict[str, float]:
+        """Calculate returns for each position."""
+        returns = {}
+        for symbol in self.positions:
+            if symbol in self.historical_data:
+                hist_data = self.historical_data[symbol]
+                if not hist_data.empty:
+                    initial_price = hist_data.iloc[0]['close']
+                    current_price = self.prices[symbol]
+                    returns[symbol] = (current_price - initial_price) / initial_price
+        return returns
+
+    def calculate_portfolio_metrics(self) -> Dict[str, float]:
+        """Calculate basic portfolio metrics."""
+        portfolio_value = self.get_portfolio_value()
+        weights = self.get_position_weights()
+        returns = self.calculate_returns()
+        
+        # Calculate portfolio return
+        portfolio_return = sum(weights.get(symbol, 0) * returns.get(symbol, 0) 
+                             for symbol in self.positions)
+
+        # Calculate other metrics
+        metrics = {
+            'total_value': portfolio_value,
+            'return': portfolio_return,
+            'position_count': len(self.positions),
+            'timestamp': datetime.now().isoformat()
+        }
+
+        return metrics
+
+    def update_prices(self, new_prices: Dict[str, float]):
+        """Update current prices for positions."""
+        for symbol, price in new_prices.items():
+            if symbol in self.positions:
+                self.prices[symbol] = price
+
+    def update_historical_data(self, symbol: str, data: pd.DataFrame):
+        """Update historical data for a symbol."""
+        self.historical_data[symbol] = data
+
+    def get_portfolio_summary(self) -> Dict:
+        """Get a complete portfolio summary."""
+        metrics = self.calculate_portfolio_metrics()
+        weights = self.get_position_weights()
+        returns = self.calculate_returns()
+
+        positions_summary = []
+        for symbol in self.positions:
+            positions_summary.append({
+                'symbol': symbol,
+                'quantity': self.positions[symbol],
+                'price': self.prices[symbol],
+                'value': self.positions[symbol] * self.prices[symbol],
+                'weight': weights.get(symbol, 0),
+                'return': returns.get(symbol, 0)
+            })
+
+        return {
+            'metrics': metrics,
+            'positions': positions_summary
+        }
+
+    def calculate_optimization_metrics(self, weights: np.ndarray, returns: pd.DataFrame) -> Dict:
+        """Calculate advanced portfolio metrics for optimization including expected return, volatility, and Sharpe ratio"""
         portfolio_return = np.sum(returns.mean() * weights) * 252  # Annualized
         portfolio_volatility = np.sqrt(np.dot(weights.T, np.dot(returns.cov() * 252, weights)))
         sharpe_ratio = (portfolio_return - self.risk_free_rate) / portfolio_volatility
@@ -60,7 +152,7 @@ class PortfolioAnalyzer:
         )
         
         optimal_weights = result.x
-        metrics = self.calculate_portfolio_metrics(optimal_weights, returns)
+        metrics = self.calculate_optimization_metrics(optimal_weights, returns)
         
         return optimal_weights, metrics
     
@@ -83,6 +175,4 @@ class PortfolioAnalyzer:
                     adjusted_returns[symbol] = returns[symbol] * (1 + impact)
             
             portfolio_return = np.sum(adjusted_returns.mean() * weights) * 252
-            results[str(scenario)] = portfolio_return
-        
-        return results 
+            results[str(scenario)] = portfolio_return 
