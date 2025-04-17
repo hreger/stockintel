@@ -62,6 +62,12 @@ G --> H[User Onboarding]
 - Company profile scraper
 - Database setup with TimescaleDB
 
+Now: Phase 1: Data Ingestion — Kafka Producer
+(venv) PS C:\Users\psp17\stockintel> python data_ingestion\kafka_producer.py
+Produced data for AAPL: {'symbol': 'AAPL', 'price': 194.27, 'volume': 59732423, 'timestamp': '2025-04-16'}
+Produced data for MSFT: {'symbol': 'MSFT', 'price': 371.61, 'volume': 21967826, 'timestamp': '2025-04-16'}
+Produced data for GOOGL: {'symbol': 'GOOGL', 'price': 153.33, 'volume': 28187421, 'timestamp': '2025-04-16'}
+
 ### Phase 2: Portfolio Analysis (4 Weeks)
 - Portfolio performance tracking
 - Risk metrics visualization
