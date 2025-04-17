@@ -11,6 +11,10 @@
 - Stress Testing Scenarios
 - Personalized User Onboarding
 - SHAP-based Model Explanations
+- Market Sentiment Analysis
+- Trading Strategy Backtesting
+- Real-time Market Scanner
+- News and Social Media Analysis
 
 ## 🚀 Quick Start
 1. Install dependencies:
@@ -44,6 +48,9 @@ D --> E[Portfolio Analyzer]
 E --> F[Dashboard]
 F --> G[Explainable AI]
 G --> H[User Onboarding]
+H --> I[Market Scanner]
+I --> J[Sentiment Analysis]
+J --> K[Strategy Backtesting]
 ```
 
 ## 🤖 Models Used
@@ -53,6 +60,8 @@ G --> H[User Onboarding]
 | Risk Assessment        | Monte Carlo     | 92% CI    |
 | Portfolio Optimization | Markowitz       | N/A       |
 | Model Explanation      | SHAP            | N/A       |
+| Sentiment Analysis     | BERT            | 85% F1    |
+| Market Scanning        | Technical/Fundamental | N/A |
 
 ## 🎯 Implementation Phases
 
@@ -64,8 +73,11 @@ G --> H[User Onboarding]
 
 Now: Phase 1: Data Ingestion — Kafka Producer
 (venv) PS C:\Users\psp17\stockintel> python data_ingestion\kafka_producer.py
+
 Produced data for AAPL: {'symbol': 'AAPL', 'price': 194.27, 'volume': 59732423, 'timestamp': '2025-04-16'}
+
 Produced data for MSFT: {'symbol': 'MSFT', 'price': 371.61, 'volume': 21967826, 'timestamp': '2025-04-16'}
+
 Produced data for GOOGL: {'symbol': 'GOOGL', 'price': 153.33, 'volume': 28187421, 'timestamp': '2025-04-16'}
 
 ### Phase 2: Portfolio Analysis (4 Weeks)
@@ -84,20 +96,36 @@ Produced data for GOOGL: {'symbol': 'GOOGL', 'price': 153.33, 'volume': 28187421
 - Notification preferences
 - User configuration management
 
-## 🔍 Explainable AI Features
-- SHAP-based feature importance
-- Human-readable explanations
-- Technical indicator analysis
-- Risk factor breakdown
-- Model confidence metrics
+### Phase 4: Additional Components (4 Weeks)
+- Market sentiment analysis
+- News and social media integration
+- Trading strategy backtesting
+- Real-time market scanner
+- Technical indicator library
+- Strategy optimization
+- Paper trading simulation
+- Performance analytics
 
-## 👤 User Onboarding
-- Risk tolerance assessment
-- Investment horizon selection
-- Sector preferences
-- Watchlist management
-- Notification settings
-- Personalized portfolio recommendations
+## 🔍 Advanced Features
+### Market Sentiment Analysis
+- News sentiment scoring
+- Social media sentiment tracking
+- Sentiment trend analysis
+- Sentiment-based alerts
+
+### Strategy Development
+- Backtesting framework
+- Parameter optimization
+- Strategy combination
+- Performance metrics
+- Risk-adjusted returns
+
+### Market Scanning
+- Technical indicators
+- Fundamental metrics
+- Pattern recognition
+- Custom scan criteria
+- Real-time alerts
 
 ## 📜 License
 MIT License - See [LICENSE.md](LICENSE.md)
