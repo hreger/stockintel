@@ -1,40 +1,34 @@
-from sqlalchemy import create_engine, Column, Integer, Float, String, DateTime
+from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
-# Database configuration
-DATABASE_URL = os.getenv('DATABASE_URL', 'postgresql://postgres:postgres@localhost:5432/stockintel')
-
-# Create SQLAlchemy engine
+# Create database engine
+DATABASE_URL = os.getenv('DATABASE_URL')
 engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Create base class for declarative models
+# Create declarative base
 Base = declarative_base()
 
 class StockData(Base):
-    """Model for storing stock data"""
-    __tablename__ = "stock_data"
-
-    id = Column(Integer, primary_key=True, index=True)
-    symbol = Column(String, index=True)
+    __tablename__ = 'stock_data'
+    
+    id = Column(Integer, primary_key=True)
+    symbol = Column(String)
     price = Column(Float)
     volume = Column(Integer)
     timestamp = Column(DateTime)
 
-# Create tables
 def init_db():
-    Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(engine)
 
 def get_db():
-    """Dependency for getting database session"""
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     db = SessionLocal()
     try:
         yield db
     finally:
-        db.close() 
+        db.close()

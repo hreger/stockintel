@@ -14,7 +14,7 @@
 
 ### 📊 Real-time Market Intelligence
 - **Live Data Pipeline**: Stream real-time stock data from Alpha Vantage
-- **Kafka Integration**: Process market data in real-time
+- **API Integration**: Process market data in real-time
 - **PostgreSQL Storage**: Reliable and efficient data management
 - **Automated Analysis**: Let the system do the heavy lifting
 

@@ -175,4 +175,5 @@ class PortfolioAnalyzer:
                     adjusted_returns[symbol] = returns[symbol] * (1 + impact)
             
             portfolio_return = np.sum(adjusted_returns.mean() * weights) * 252
-            results[str(scenario)] = portfolio_return 
+            results[str(scenario)] = portfolio_return
+
