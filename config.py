@@ -7,10 +7,6 @@ load_dotenv()
 ALPHA_VANTAGE_KEY = os.getenv('ALPHA_VANTAGE_KEY')
 POLYGON_KEY = os.getenv('POLYGON_KEY')
 
-# Kafka Configuration
-KAFKA_BOOTSTRAP_SERVERS = ['localhost:9092']
-KAFKA_TOPIC = 'stock_data'
-
 # Database Configuration
 DB_HOST = os.getenv('DB_HOST', 'localhost')
 DB_PORT = os.getenv('DB_PORT', '5432')

@@ -114,5 +114,81 @@ app.layout.children.append(
     )
 )
 
+def create_layout():
+    return html.Div([
+        # Header
+        html.Div([
+            html.H1("StockIntel Dashboard"),
+            html.Div([
+                dcc.Input(
+                    id='stock-input',
+                    type='text',
+                    placeholder='Enter Stock Symbol (e.g., AAPL)',
+                    className='stock-input'
+                ),
+                html.Button('Analyze', id='analyze-button', n_clicks=0)
+            ], className='stock-search')
+        ], className='header'),
+
+        # Time Period Selector
+        html.Div([
+            dcc.RadioItems(
+                id='timeframe-selector',
+                options=[
+                    {'label': 'Day', 'value': '1D'},
+                    {'label': 'Week', 'value': '1W'},
+                    {'label': 'Month', 'value': '1M'},
+                    {'label': '1 Year', 'value': '1Y'},
+                    {'label': '5 Years', 'value': '5Y'}
+                ],
+                value='1D',
+                className='timeframe-selector'
+            )
+        ]),
+
+        # Main Content Grid
+        html.Div([
+            # Stock Analysis Section
+            html.Div([
+                html.H2("Stock Analysis"),
+                
+                # Market Data
+                html.Div([
+                    html.H3("Market Data"),
+                    dcc.Graph(id='price-chart'),
+                    html.Div(id='ohlcv-data', className='metrics-grid'),
+                    dcc.Graph(id='volume-chart'),
+                    dcc.Graph(id='technical-indicators')
+                ], className='analysis-section'),
+
+                # Company Data
+                html.Div([
+                    html.H3("Company Information"),
+                    html.Div(id='company-info', className='company-grid'),
+                    html.Div(id='financial-metrics', className='metrics-grid'),
+                    html.Div(id='company-news', className='news-feed')
+                ], className='analysis-section'),
+
+                # Sentiment Analysis
+                html.Div([
+                    html.H3("Market Sentiment"),
+                    dcc.Graph(id='sentiment-gauge'),
+                    html.Div(id='sentiment-breakdown', className='sentiment-grid'),
+                    html.Div(id='social-sentiment', className='social-feed')
+                ], className='analysis-section')
+            ], className='stock-analysis'),
+
+            # Top Performers Section
+            html.Div([
+                html.H2("Top Performing Stocks"),
+                html.Div([
+                    dcc.Graph(id='top-performers-chart'),
+                    html.Div(id='top-performers-metrics', className='performers-grid'),
+                    html.Div(id='performers-comparison', className='comparison-table')
+                ], className='top-performers')
+            ], className='performers-section')
+        ], className='main-content')
+    ])
+
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run(debug=True)
