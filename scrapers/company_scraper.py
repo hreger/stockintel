@@ -3,6 +3,11 @@ from bs4 import BeautifulSoup
 import json
 from typing import Dict, Optional
 import re
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class CompanyScraper:
     def __init__(self):
@@ -38,7 +43,7 @@ class CompanyScraper:
             
             return info
         except Exception as e:
-            print(f"Error fetching Wikipedia data: {str(e)}")
+            logger.error(f"Error fetching Wikipedia data: {str(e)}")
             return {}
     
     def get_reuters_data(self, symbol: str) -> Dict:
@@ -60,7 +65,7 @@ class CompanyScraper:
             
             return info
         except Exception as e:
-            print(f"Error fetching Reuters data: {str(e)}")
+            logger.error(f"Error fetching Reuters data: {str(e)}")
             return {}
     
     def get_company_profile(self, symbol: str, company_name: str) -> Dict:
@@ -78,4 +83,4 @@ if __name__ == "__main__":
     # Example usage
     scraper = CompanyScraper()
     profile = scraper.get_company_profile('AAPL', 'Apple Inc.')
-    print(json.dumps(profile, indent=2)) 
+    print(json.dumps(profile, indent=2))

@@ -19,9 +19,9 @@ DB_USER = os.getenv('DB_USER', 'postgres')
 DB_PASSWORD = os.getenv('DB_PASSWORD', 'postgres')
 
 # Model Configuration
-ARIMA_ORDER = (5, 1, 0)  # (p, d, q) parameters for ARIMA model
-PREDICTION_STEPS = 7  # Number of days to predict
+ARIMA_ORDER = tuple(map(int, os.getenv('ARIMA_ORDER', '5,1,0').split(',')))
+PREDICTION_STEPS = int(os.getenv('PREDICTION_STEPS', '7'))
 
 # Scraper Configuration
-REQUEST_TIMEOUT = 10  # seconds
-MAX_RETRIES = 3 
+REQUEST_TIMEOUT = int(os.getenv('REQUEST_TIMEOUT', '10'))
+MAX_RETRIES = int(os.getenv('MAX_RETRIES', '3'))

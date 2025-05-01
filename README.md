@@ -159,9 +159,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 💬 Support
 
 Got questions? We're here to help!
-- Open an issue in the GitHub repository
-- Join our [Discord community](https://discord.gg/your-discord-link)
-- Email us at support@stockintel.com
+- 🐛 Open an issue in the GitHub repository
+- 💭 Join our [Discord community](https://discord.gg/your-discord-link)
+- 📧 Email us at support@stockintel.com
 
 ## 🙏 Acknowledgments
 
