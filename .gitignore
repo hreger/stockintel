@@ -3,3 +3,5 @@ venv310/
 __pycache__/
 *.pyc
 kafka_2.12-3.6.0/
+.env
+.env.example
