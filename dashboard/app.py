@@ -9,11 +9,15 @@ from data_ingestion.api_client import StockDataClient
 from portfolio.portfolio_analyzer import PortfolioAnalyzer
 from dashboard.components.technical_indicators import calculate_rsi, calculate_macd, calculate_bollinger_bands
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
+from dashboard.callbacks import register_callbacks
 
 # Initialize components with dark theme
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.DARKLY],suppress_callback_exceptions=True)
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.DARKLY], suppress_callback_exceptions=True)
+app.server.secret_key = "secret-key"  # <-- Add this line
 stock_client = StockDataClient()
 portfolio_analyzer = PortfolioAnalyzer()
+
+register_callbacks(app)
 
 # Initialize sample portfolio data
 portfolio_analyzer.add_position('AAPL', 100, 150.0)

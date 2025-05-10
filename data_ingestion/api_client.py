@@ -22,6 +22,8 @@ class StockDataClient:
         }
         response = requests.get(self.base_url, params=params)
         response.raise_for_status()
-        return response.json()
+        data = response.json()
+        print(f"Fetched data for {symbol}: {data}")  # Add this line for debugging
+        return data
 
     # Add more methods as needed for your project

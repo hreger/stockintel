@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="height: 100vh;">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h4>Login</h4>
+            </div>
+            <div class="card-body">
+                <form id="login-form">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                    <div id="login-error" class="text-danger mt-2" style="display: none;"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(document).ready(function() {
+        $('#login-form').submit(function(e) {
+            e.preventDefault();
+            
+            $.ajax({
+                url: '/login',
+                type: 'POST',
+                data: {
+                    username: $('#username').val(),
+                    password: $('#password').val()
+                },
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = response.redirect;
+                    } else {
+                        $('#login-error').text(response.message).show();
+                    }
+                },
+                error: function() {
+                    $('#login-error').text('An error occurred. Please try again.').show();
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

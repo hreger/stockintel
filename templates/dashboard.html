@@ -1,0 +1,129 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="dashboard-title">StockIntel Dashboard</h1>
+        <form class="d-flex" method="get" action="/">
+            <input class="form-control me-2" type="text" name="symbol" value="{{ symbol }}" placeholder="Enter stock symbol (e.g., AAPL)" style="max-width: 300px;">
+            <button class="btn btn-primary" type="submit">Search</button>
+        </form>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <!-- Portfolio Summary Card -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Portfolio Summary</h5>
+            </div>
+            <div class="card-body">
+                <h4>{{ portfolio.value }}</h4>
+                <p>Total Portfolio Value</p>
+                <h4 class="{% if portfolio.return.startswith('-') %}negative{% else %}positive{% endif %}">
+                    {{ portfolio.return }}
+                </h4>
+                <p>Total Return</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Position Distribution -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5>Position Distribution</h5>
+            </div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <img src="data:image/png;base64,{{ portfolio.chart }}" class="chart-img" alt="Portfolio Distribution">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Technical Analysis Section -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Technical Analysis: {{ symbol }}</h5>
+            </div>
+            <div class="card-body">
+                {% if charts %}
+                    <!-- Price Chart -->
+                    <div class="chart-container">
+                        <img src="data:image/png;base64,{{ charts.price_chart }}" class="chart-img" alt="Price Chart">
+                    </div>
+                    
+                    <!-- Volume Chart -->
+                    <div class="chart-container">
+                        <img src="data:image/png;base64,{{ charts.volume_chart }}" class="chart-img" alt="Volume Chart">
+                    </div>
+                    
+                    <div class="row">
+                        <!-- RSI Chart -->
+                        <div class="col-md-6">
+                            <div class="chart-container">
+                                <img src="data:image/png;base64,{{ charts.rsi_chart }}" class="chart-img" alt="RSI Chart">
+                            </div>
+                        </div>
+                        
+                        <!-- MACD Chart -->
+                        <div class="col-md-6">
+                            <div class="chart-container">
+                                <img src="data:image/png;base64,{{ charts.macd_chart }}" class="chart-img" alt="MACD Chart">
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        No data available for {{ symbol }}. Please try another symbol.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Positions Table -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Portfolio Positions</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-dark table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Value</th>
+                            <th>Weight</th>
+                            <th>Return</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for position in portfolio.positions %}
+                        <tr>
+                            <td>{{ position.symbol }}</td>
+                            <td>{{ position.quantity }}</td>
+                            <td>${{ "%.2f"|format(position.price) }}</td>
+                            <td>${{ "%.2f"|format(position.value) }}</td>
+                            <td>{{ "%.2f"|format(position.weight * 100) }}%</td>
+                            <td class="{% if position.return < 0 %}negative{% else %}positive{% endif %}">
+                                {{ "%.2f"|format(position.return * 100) }}%
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
