@@ -42,6 +42,7 @@ pip install -r requirements.txt
 
 # Run the application
 python flask_app.py
+```
 
 ## Technologies Used
 - Flask - Web framework
