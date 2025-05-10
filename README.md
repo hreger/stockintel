@@ -29,10 +29,10 @@
 - **Python 3.8+**
 - **FastAPI** (API backend)
 - **Dash** (Web dashboard)
-- **Kafka** (Real-time data streaming)
 - **PostgreSQL** (Data storage)
 - **TensorFlow** (Machine learning)
 - **Alpha Vantage** (Market data provider)
+- **Kafka** (Real-time data streaming, *optional*)
 
 ---
 
@@ -42,8 +42,8 @@
 
 - Python 3.8+
 - PostgreSQL 12+
-- Kafka 2.8+
 - Alpha Vantage API key
+- *(Optional)* Kafka 2.8+ if you want to enable real-time streaming features
 
 ### Installation
 
@@ -68,10 +68,10 @@
     Create a `.env` file in the project root:
     ```env
     ALPHA_VANTAGE_KEY=your_actual_api_key_here
-    KAFKA_BOOTSTRAP_SERVERS=localhost:9092
     DATABASE_URL=postgresql://postgres:your_password@localhost:5432/stockintel
     DEBUG=True
     LOG_LEVEL=INFO
+    # KAFKA_BOOTSTRAP_SERVERS=localhost:9092  # Only if using Kafka
     ```
 
 4. **Start services**
@@ -79,14 +79,12 @@
     # Start PostgreSQL (if not running)
     net start postgresql
 
-    # Start Kafka (in separate terminals)
-    .\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
-    .\bin\windows\kafka-server-start.bat .\config\server.properties
+    # If using Kafka, start Kafka and Zookeeper as described in the Kafka documentation
+    # Otherwise, skip this step
 
     # Start application components (in separate terminals)
-    python data_ingestion/kafka_producer.py
-    python data_ingestion/kafka_consumer.py
-    python prediction_service/prediction_service.py
+    # If you are NOT using Kafka, skip the kafka_producer.py and kafka_consumer.py scripts
+    python explainable_ai/explainer.py
     python dashboard/app.py
     ```
 
@@ -97,27 +95,26 @@
 ```
 stockintel/
 ├── data_ingestion/          # Data collection and processing
-│   ├── kafka_producer.py    # Kafka producer for stock data
-│   ├── kafka_consumer.py    # Kafka consumer for data processing
-│   ├── init_db.py          # Database initialization
-│   └── check_data.py       # Data verification
+│   ├── kafka_producer.py    # Kafka producer for stock data (optional)
+│   ├── kafka_consumer.py    # Kafka consumer for data processing (optional)
+│   ├── init_db.py           # Database initialization
+│   └── check_data.py        # Data verification
 ├── prediction_service/      # Machine learning predictions
 │   ├── prediction_service.py # FastAPI service
-│   ├── models/             # ML models
-│   └── utils/              # Helper functions
-├── dashboard/              # Web interface
-│   ├── app.py             # Dash application
-│   ├── components/        # UI components
-│   └── layouts/           # Page layouts
-├── portfolio/             # Portfolio management
+│   ├── models/              # ML models
+│   └── utils/               # Helper functions
+├── dashboard/               # Web interface
+│   ├── app.py               # Dash application
+│   ├── components/          # UI components
+│   └── layouts/             # Page layouts
+├── portfolio/               # Portfolio management
 │   └── portfolio_analyzer.py # Portfolio analysis
-├── backtesting/           # Strategy testing
-│   └── strategy_tester.py # Backtesting engine
-├── scanner/               # Market scanning
-│   └── market_scanner.py  # Opportunity scanner
-├── requirements.txt       # Project dependencies
-└── .env                  # Environment variables
-```
+├── backtesting/             # Strategy testing
+│   └── strategy_tester.py   # Backtesting engine
+├── scanner/                 # Market scanning
+│   └── market_scanner.py    # Opportunity scanner
+├── requirements.txt         # Project dependencies
+└── .env                     # Environment variables
 
 ## 🤝 Contributing
 

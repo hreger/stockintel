@@ -11,7 +11,7 @@ from dashboard.components.technical_indicators import calculate_rsi, calculate_m
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 
 # Initialize components with dark theme
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.DARKLY],suppress_callback_exceptions=True)
 stock_client = StockDataClient()
 portfolio_analyzer = PortfolioAnalyzer()
 
@@ -31,6 +31,19 @@ app.layout = html.Div([
 
 # Define the main layout
 main_layout = dbc.Container([
+    # Login Section
+    dbc.Row([
+        dbc.Col([
+            dbc.Card([
+                dbc.CardHeader("Login"),
+                dbc.CardBody([
+                    dbc.Input(id="username-input", placeholder="Username", type="text", className="mb-2"),
+                    dbc.Input(id="password-input", placeholder="Password", type="password", className="mb-2"),
+                    dbc.Button("Login", id="login-button", color="primary", className="me-2")
+                ])
+            ])
+        ], width=4)
+    ], className="mb-4"),
     # Header with search
     dbc.Row([
         dbc.Col([
@@ -425,6 +438,22 @@ def login_callback(n_clicks, username, password):
         return "/"
     return "/login"
 
+# Define a simple login layout
+login_layout = dbc.Container([
+    dbc.Row([
+        dbc.Col([
+            dbc.Card([
+                dbc.CardHeader("Login"),
+                dbc.CardBody([
+                    dbc.Input(id="username-input", placeholder="Username", type="text", className="mb-2"),
+                    dbc.Input(id="password-input", placeholder="Password", type="password", className="mb-2"),
+                    dbc.Button("Login", id="login-button", color="primary", className="me-2")
+                ])
+            ])
+        ], width=4)
+    ], className="justify-content-center align-items-center", style={"height": "100vh"})
+], fluid=True)
+
 # Protect the main layout
 @app.callback(
     Output('page-content', 'children'),
@@ -432,7 +461,7 @@ def login_callback(n_clicks, username, password):
 )
 def display_page(pathname):
     if pathname == '/login' or not current_user.is_authenticated:
-        return login.layout
+        return login_layout
     return main_layout
 
 if __name__ == '__main__':
