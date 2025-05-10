@@ -61,6 +61,7 @@ python flask_app.py
 
 
 📁 Project Structure
+```bash
 stockintel/
 ├── data_ingestion/          # Data collection and processing
 │   ├── kafka_producer.py    # Kafka producer for stock data (optional)
@@ -83,7 +84,7 @@ stockintel/
 │   └── market_scanner.py    # Opportunity scanner
 ├── requirements.txt         # Project dependencies
 └── .env                     # Environment variables
-
+```
 ## 🤝 Contributing
 
 We love contributions! Here's how you can help:
