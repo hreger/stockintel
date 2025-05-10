@@ -1,56 +1,111 @@
-{% extends "layout.html" %}
-
-{% block content %}
-<div class="row justify-content-center align-items-center" style="height: 100vh;">
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h4>Login</h4>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockIntel - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #0a1929;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-container {
+            background-color: #0d2240;
+            border-radius: 8px;
+            padding: 2rem;
+            width: 400px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .login-header i {
+            font-size: 3rem;
+            color: #1976d2;
+            margin-bottom: 1rem;
+        }
+        .login-header h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+        .form-control {
+            background-color: #1e3a5f;
+            border: none;
+            color: white;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+        }
+        .form-control::placeholder {
+            color: #8ba1bc;
+        }
+        .btn-primary {
+            background-color: #1976d2;
+            border: none;
+            padding: 0.75rem;
+            font-weight: 600;
+            width: 100%;
+        }
+        .btn-primary:hover {
+            background-color: #1565c0;
+        }
+        .error-message {
+            color: #f44336;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        .form-text {
+            color: #8ba1bc;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .form-text a {
+            color: #1976d2;
+            text-decoration: none;
+        }
+        .form-text a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <i class="fas fa-chart-line"></i>
+            <h2>StockIntel</h2>
+        </div>
+        
+        {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+        {% endif %}
+        
+        <form method="post" action="/login">
+            <div class="mb-3">
+                <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
             </div>
-            <div class="card-body">
-                <form id="login-form">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Username">
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Login</button>
-                    <div id="login-error" class="text-danger mt-2" style="display: none;"></div>
-                </form>
+            <div class="mb-3">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
             </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        
+        <div class="form-text">
+            Don't have an account? <a href="#">Sign up</a>
+        </div>
+        <div class="form-text">
+            <a href="#">Forgot password?</a>
         </div>
     </div>
-</div>
-{% endblock %}
 
-{% block scripts %}
-<script>
-    $(document).ready(function() {
-        $('#login-form').submit(function(e) {
-            e.preventDefault();
-            
-            $.ajax({
-                url: '/login',
-                type: 'POST',
-                data: {
-                    username: $('#username').val(),
-                    password: $('#password').val()
-                },
-                success: function(response) {
-                    if (response.success) {
-                        window.location.href = response.redirect;
-                    } else {
-                        $('#login-error').text(response.message).show();
-                    }
-                },
-                error: function() {
-                    $('#login-error').text('An error occurred. Please try again.').show();
-                }
-            });
-        });
-    });
-</script>
-{% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

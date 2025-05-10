@@ -1,129 +1,482 @@
-{% extends "layout.html" %}
-
-{% block content %}
-<div class="row mb-4">
-    <div class="col-12">
-        <h1 class="dashboard-title">StockIntel Dashboard</h1>
-        <form class="d-flex" method="get" action="/">
-            <input class="form-control me-2" type="text" name="symbol" value="{{ symbol }}" placeholder="Enter stock symbol (e.g., AAPL)" style="max-width: 300px;">
-            <button class="btn btn-primary" type="submit">Search</button>
-        </form>
-    </div>
-</div>
-
-<div class="row mb-4">
-    <!-- Portfolio Summary Card -->
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5>Portfolio Summary</h5>
-            </div>
-            <div class="card-body">
-                <h4>{{ portfolio.value }}</h4>
-                <p>Total Portfolio Value</p>
-                <h4 class="{% if portfolio.return.startswith('-') %}negative{% else %}positive{% endif %}">
-                    {{ portfolio.return }}
-                </h4>
-                <p>Total Return</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StockIntel Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-color: #0a1929;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background-color: #0a1929;
+            border-bottom: 1px solid #1e3a5f;
+            padding: 0.5rem 1rem;
+        }
+        .search-bar {
+            background-color: #1e3a5f;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            width: 400px;
+        }
+        .search-bar::placeholder {
+            color: #8ba1bc;
+        }
+        .btn-primary {
+            background-color: #1976d2;
+            border-color: #1976d2;
+        }
+        .btn-primary:hover {
+            background-color: #1565c0;
+            border-color: #1565c0;
+        }
+        .card {
+            background-color: #0d2240;
+            border: 1px solid #1e3a5f;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+        .card-header {
+            background-color: #0d2240;
+            border-bottom: 1px solid #1e3a5f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        .market-ticker {
+            background-color: #0a1929;
+            padding: 0.5rem 0;
+            overflow-x: auto;
+            white-space: nowrap;
+            border-bottom: 1px solid #1e3a5f;
+        }
+        .ticker-item {
+            display: inline-block;
+            margin-right: 2rem;
+            padding: 0 1rem;
+        }
+        .ticker-name {
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        .ticker-value {
+            margin-right: 0.5rem;
+        }
+        .positive {
+            color: #4caf50;
+        }
+        .negative {
+            color: #f44336;
+        }
+        .chart-container {
+            background-color: #0d2240;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        .chart-img {
+            width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+        .timeframe-btn {
+            background-color: #1e3a5f;
+            border: none;
+            color: #8ba1bc;
+            padding: 0.25rem 0.75rem;
+            margin-right: 0.25rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        .timeframe-btn.active {
+            background-color: #1976d2;
+            color: white;
+        }
+        .signal-item {
+            border-bottom: 1px solid #1e3a5f;
+            padding: 0.75rem 0;
+        }
+        .signal-icon {
+            background-color: #4caf50;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 0.75rem;
+        }
+        .signal-text {
+            font-size: 0.9rem;
+        }
+        .signal-time {
+            font-size: 0.8rem;
+            color: #8ba1bc;
+        }
+        .signal-details {
+            font-size: 0.8rem;
+            color: #8ba1bc;
+            margin-top: 0.25rem;
+        }
+        .tab-buttons {
+            display: flex;
+            margin-bottom: 1rem;
+        }
+        .tab-btn {
+            background-color: #1e3a5f;
+            border: none;
+            color: #8ba1bc;
+            padding: 0.5rem 1rem;
+            margin-right: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        .tab-btn.active {
+            background-color: #1976d2;
+            color: white;
+        }
+        .table {
+            color: white;
+        }
+        .table thead th {
+            border-bottom: 1px solid #1e3a5f;
+            color: #8ba1bc;
+            font-weight: normal;
+        }
+        .table td {
+            border-bottom: 1px solid #1e3a5f;
+        }
+        .sidebar {
+            border-left: 1px solid #1e3a5f;
+        }
+        .portfolio-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .portfolio-return {
+            font-size: 1rem;
+        }
+        .view-all {
+            color: #1976d2;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+        .view-all:hover {
+            text-decoration: underline;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-chart-line me-2"></i>StockIntel
+            </a>
+            <form class="d-flex mx-auto" method="get" action="/">
+                <input class="search-bar me-2" type="search" name="symbol" value="{{ symbol }}" placeholder="Search for company, sector, index or function. Press / or click here">
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+            <div>
+                <button class="btn btn-primary me-2">
+                    <i class="fas fa-plus me-1"></i> Add Trade
+                </button>
+                <button class="btn btn-outline-light">
+                    <i class="fas fa-user"></i>
+                </button>
             </div>
         </div>
-    </div>
-    
-    <!-- Position Distribution -->
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h5>Position Distribution</h5>
+    </nav>
+
+    <!-- Market Ticker -->
+    <div class="market-ticker">
+        <div class="container-fluid">
+            {% for name, data in market_indices.items() %}
+            <div class="ticker-item">
+                <span class="ticker-name">{{ name }}</span>
+                <span class="ticker-value">{{ data.value }}</span>
+                <span class="{{ data.color }}">{{ data.change }}</span>
             </div>
-            <div class="card-body">
-                <div class="chart-container">
-                    <img src="data:image/png;base64,{{ portfolio.chart }}" class="chart-img" alt="Portfolio Distribution">
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container-fluid py-3">
+        <div class="row">
+            <!-- Left Sidebar -->
+            <div class="col-md-1">
+                <div class="d-flex flex-column align-items-center">
+                    <a href="#" class="mb-4"><i class="fas fa-home fa-lg"></i></a>
+                    <a href="#" class="mb-4"><i class="fas fa-chart-bar fa-lg"></i></a>
+                    <a href="#" class="mb-4"><i class="fas fa-bell fa-lg"></i></a>
+                    <a href="#" class="mb-4"><i class="fas fa-envelope fa-lg"></i></a>
+                    <a href="#" class="mb-4"><i class="fas fa-cog fa-lg"></i></a>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-md-8">
+                <!-- Market Overview Section -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="section-title">Market Overview</h5>
+                        <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-buttons">
+                            <button class="tab-btn active">Index Chart</button>
+                            <button class="tab-btn">F/P / L/P</button>
+                            <button class="tab-btn">Adv & Dec</button>
+                        </div>
+                        <div class="tab-buttons">
+                            <button class="timeframe-btn active">1D</button>
+                            <button class="timeframe-btn">3D</button>
+                            <button class="timeframe-btn">1M</button>
+                            <button class="timeframe-btn">3M</button>
+                            <button class="timeframe-btn">6M</button>
+                            <button class="timeframe-btn">YTD</button>
+                            <button class="timeframe-btn">1Y</button>
+                            <button class="timeframe-btn">3Y</button>
+                            <button class="timeframe-btn">All</button>
+                        </div>
+                        <div class="chart-container">
+                            {% if charts and charts.price_chart %}
+                            <img src="data:image/png;base64,{{ charts.price_chart }}" class="chart-img" alt="Price Chart">
+                            {% else %}
+                            <div class="alert alert-warning">
+                                No data available for {{ symbol }}. Please try another symbol.
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Market Performers Section -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="section-title">Market Performers</h5>
+                                <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                            <div class="card-body">
+                                <div class="tab-buttons">
+                                    <button class="tab-btn active">Price</button>
+                                    <button class="tab-btn">Active</button>
+                                    <button class="tab-btn">Points</button>
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Symbol</th>
+                                            <th>Current Price</th>
+                                            <th>Change</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for performer in top_performers %}
+                                        <tr>
+                                            <td>{{ performer.symbol }}</td>
+                                            <td>{{ performer.price }}</td>
+                                            <td class="{% if performer.change.startswith('+') %}positive{% else %}negative{% endif %}">
+                                                {{ performer.change }}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="section-title">Calendar</h5>
+                                <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+                            </div>
+                            <div class="card-body">
+                                <div class="tab-buttons">
+                                    <button class="tab-btn active">Earnings</button>
+                                    <button class="tab-btn">Board Meetings</button>
+                                    <button class="tab-btn">Payouts</button>
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Symbol</th>
+                                            <th>Period</th>
+                                            <th>EPS</th>
+                                            <th>Payout</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>AAPL</td>
+                                            <td>Q1 2023</td>
+                                            <td>$1.52</td>
+                                            <td>$0.24</td>
+                                        </tr>
+                                        <tr>
+                                            <td>MSFT</td>
+                                            <td>Q1 2023</td>
+                                            <td>$2.45</td>
+                                            <td>$0.68</td>
+                                        </tr>
+                                        <tr>
+                                            <td>GOOGL</td>
+                                            <td>Q1 2023</td>
+                                            <td>$1.44</td>
+                                            <td>-</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="col-md-3 sidebar">
+                <!-- Portfolios Section -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="section-title">Portfolios</h5>
+                        <div>
+                            <button class="tab-btn active">Portfolios</button>
+                            <button class="tab-btn">Watchlists</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <h6>Portfolio Value</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="portfolio-value">{{ portfolio.value }}</div>
+                            <div class="portfolio-return {{ 'positive' if not portfolio.return.startswith('-') else 'negative' }}">
+                                {{ portfolio.return }}
+                            </div>
+                        </div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Symbol</th>
+                                    <th>Current Price</th>
+                                    <th>Unrealized G/L</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for position in portfolio.positions %}
+                                <tr>
+                                    <td>{{ position.symbol }}</td>
+                                    <td>${{ "%.2f"|format(position.price) }}</td>
+                                    <td class="{% if position.return > 0 %}positive{% else %}negative{% endif %}">
+                                        {{ "%.2f"|format(position.return * 100) }}%
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Signals Section -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="section-title">Signals</h5>
+                        <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="card-body p-0">
+                        {% for signal in market_signals %}
+                        <div class="signal-item d-flex p-3">
+                            <div class="signal-icon">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div>
+                                <div class="d-flex align-items-center">
+                                    <strong class="me-2">{{ signal.symbol }}</strong>
+                                    <span class="signal-text">{{ signal.message }}</span>
+                                </div>
+                                <div class="signal-time">{{ signal.time }}</div>
+                                <div class="signal-details">{{ signal.details }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Announcements Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <button class="tab-btn active">Announcements</button>
+                            <button class="tab-btn">News</button>
+                        </div>
+                        <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="card-body p-0">
+                        {% for news in news_items %}
+                        <div class="signal-item p-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ news.title }}</strong>
+                                <small class="signal-time">{{ news.time }}</small>
+                            </div>
+                            <div class="signal-details mt-1">{{ news.description }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Technical Analysis Section -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>Technical Analysis: {{ symbol }}</h5>
-            </div>
-            <div class="card-body">
-                {% if charts %}
-                    <!-- Price Chart -->
-                    <div class="chart-container">
-                        <img src="data:image/png;base64,{{ charts.price_chart }}" class="chart-img" alt="Price Chart">
-                    </div>
-                    
-                    <!-- Volume Chart -->
-                    <div class="chart-container">
-                        <img src="data:image/png;base64,{{ charts.volume_chart }}" class="chart-img" alt="Volume Chart">
-                    </div>
-                    
-                    <div class="row">
-                        <!-- RSI Chart -->
-                        <div class="col-md-6">
-                            <div class="chart-container">
-                                <img src="data:image/png;base64,{{ charts.rsi_chart }}" class="chart-img" alt="RSI Chart">
-                            </div>
-                        </div>
-                        
-                        <!-- MACD Chart -->
-                        <div class="col-md-6">
-                            <div class="chart-container">
-                                <img src="data:image/png;base64,{{ charts.macd_chart }}" class="chart-img" alt="MACD Chart">
-                            </div>
-                        </div>
-                    </div>
-                {% else %}
-                    <div class="alert alert-warning">
-                        No data available for {{ symbol }}. Please try another symbol.
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Positions Table -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>Portfolio Positions</h5>
-            </div>
-            <div class="card-body">
-                <table class="table table-dark table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>Symbol</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Value</th>
-                            <th>Weight</th>
-                            <th>Return</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for position in portfolio.positions %}
-                        <tr>
-                            <td>{{ position.symbol }}</td>
-                            <td>{{ position.quantity }}</td>
-                            <td>${{ "%.2f"|format(position.price) }}</td>
-                            <td>${{ "%.2f"|format(position.value) }}</td>
-                            <td>{{ "%.2f"|format(position.weight * 100) }}%</td>
-                            <td class="{% if position.return < 0 %}negative{% else %}positive{% endif %}">
-                                {{ "%.2f"|format(position.return * 100) }}%
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Timeframe button click handler
+            $('.timeframe-btn').click(function() {
+                $('.timeframe-btn').removeClass('active');
+                $(this).addClass('active');
+                
+                // Get the timeframe value
+                var timeframe = $(this).text();
+                
+                // Redirect to the same page with the new timeframe
+                var currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('timeframe', timeframe);
+                window.location.href = currentUrl.toString();
+            });
+            
+            // Tab button click handler
+            $('.tab-btn').click(function() {
+                $(this).siblings().removeClass('active');
+                $(this).addClass('active');
+            });
+        });
+    </script>
+</body>
+</html>

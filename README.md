@@ -12,87 +12,54 @@
 
 ## 🌟 Features
 
-- **Real-Time Market Data**: Stream and analyze live stock data from Alpha Vantage.
-- **Technical & Fundamental Analysis**: RSI, MACD, Bollinger Bands, financial ratios, and more.
-- **AI-Powered Predictions**: Machine learning models for price forecasting and pattern detection.
-- **Sentiment Analysis**: Gauge market mood from news and social media.
-- **Backtesting & Strategy Evaluation**: Test trading strategies on historical data.
-- **Portfolio Management**: Optimize and track your investments.
-- **Market Scanner**: Identify real-time trading opportunities.
-- **Interactive Dashboard**: Visualize data and analytics in a responsive web interface.
-- **Risk Management**: Advanced metrics and alerts to manage exposure.
+- Real-time market data visualization
+- Technical analysis with indicators (RSI, MACD, Bollinger Bands)
+- Portfolio tracking and performance analysis
+- Market signals and alerts
+- News and announcements integration
 
----
 
-## 🛠️ Tech Stack
+## Screenshots
 
-- **Python 3.8+**
-- **FastAPI** (API backend)
-- **Dash** (Web dashboard)
-- **PostgreSQL** (Data storage)
-- **TensorFlow** (Machine learning)
-- **Alpha Vantage** (Market data provider)
-- **Kafka** (Real-time data streaming, *optional*)
+### Home Page
+![Home Page](screenshots/home_page.png)
 
----
+### Additional Features
+![Other Features](screenshots/other_features.png)
 
-## 🚀 Getting Started
+## Installation
 
-### Prerequisites
+```bash
+# Clone the repository
+git clone https://github.com/hreger/stockintel.git
+cd stockintel
 
-- Python 3.8+
-- PostgreSQL 12+
-- Alpha Vantage API key
-- *(Optional)* Kafka 2.8+ if you want to enable real-time streaming features
+# Install dependencies
+pip install -r requirements.txt
 
-### Installation
+# Set up environment variables
+# Create a .env file with your API keys and database configuration
 
-1. **Clone the repository**
-    ```bash
-    git clone https://github.com/hreger/stockintel.git
-    cd stockintel
-    ```
+# Run the application
+python flask_app.py
 
-2. **Set up your environment**
-    ```bash
-    python -m venv venv
-    # On Windows
-    venv\Scripts\activate
-    # On Unix or MacOS
-    source venv/bin/activate
+## Technologies Used
+- Flask - Web framework
+- Matplotlib/Seaborn - Data visualization
+- Pandas - Data manipulation
+- Alpha Vantage API - Market data
+- PostgreSQL - Database
+- Docker - Containerization
+- Kafka - Data streaming (optional)
+- FastAPI - Prediction service
+- Dash - Web application
+- Scikit-learn - Machine learning
+- Requests - HTTP requests
+- BeautifulSoup - Web scraping
 
-    pip install -r requirements.txt
-    ```
 
-3. **Configure environment variables**
-    Create a `.env` file in the project root:
-    ```env
-    ALPHA_VANTAGE_KEY=your_actual_api_key_here
-    DATABASE_URL=postgresql://postgres:your_password@localhost:5432/stockintel
-    DEBUG=True
-    LOG_LEVEL=INFO
-    # KAFKA_BOOTSTRAP_SERVERS=localhost:9092  # Only if using Kafka
-    ```
 
-4. **Start services**
-    ```bash
-    # Start PostgreSQL (if not running)
-    net start postgresql
-
-    # If using Kafka, start Kafka and Zookeeper as described in the Kafka documentation
-    # Otherwise, skip this step
-
-    # Start application components (in separate terminals)
-    # If you are NOT using Kafka, skip the kafka_producer.py and kafka_consumer.py scripts
-    python explainable_ai/explainer.py
-    python dashboard/app.py
-    ```
-
----
-
-## 📁 Project Structure
-
-```
+📁 Project Structure
 stockintel/
 ├── data_ingestion/          # Data collection and processing
 │   ├── kafka_producer.py    # Kafka producer for stock data (optional)
@@ -141,7 +108,6 @@ Got questions? We're here to help!
 
 A big thank you to:
 - [Alpha Vantage](https://www.alphavantage.co/) for providing market data
-- [Apache Kafka](https://kafka.apache.org/) for real-time data streaming
 - [PostgreSQL](https://www.postgresql.org/) for reliable data storage
 - The amazing open-source community for their contributions
 

@@ -5,47 +5,363 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StockIntel Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --main-bg-color: #0a0e17;
+            --card-bg-color: #131722;
+            --border-color: #2a2e39;
+            --text-color: #d1d4dc;
+            --positive-color: #26a69a;
+            --negative-color: #ef5350;
+            --accent-color: #2962ff;
+            --header-height: 60px;
+            --sidebar-width: 60px;
+        }
+        
         body {
-            background-color: #1a1a1a;
-            color: #ffffff;
+            background-color: var(--main-bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
         }
-        .dashboard-title {
-            color: #ffffff;
-            margin-bottom: 1rem;
+        
+        .header {
+            height: var(--header-height);
+            background-color: var(--card-bg-color);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
         }
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--card-bg-color);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            top: var(--header-height);
+            left: 0;
+            bottom: 0;
+            z-index: 900;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+        }
+        
+        .sidebar-icon {
+            color: var(--text-color);
+            font-size: 20px;
+            margin-bottom: 30px;
+            cursor: pointer;
+        }
+        
+        .sidebar-icon:hover {
+            color: var(--accent-color);
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            padding: 20px;
+        }
+        
         .card {
-            background-color: #2a2a2a;
-            border: 1px solid #3a3a3a;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1rem;
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 20px;
         }
+        
         .card-header {
-            background-color: #303030;
-            border-bottom: 1px solid #3a3a3a;
+            background-color: var(--card-bg-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
+        
+        .card-body {
+            padding: 15px;
+        }
+        
+        .market-ticker {
+            display: flex;
+            overflow-x: auto;
+            padding: 10px 0;
+            margin-bottom: 20px;
+            background-color: var(--card-bg-color);
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .ticker-item {
+            padding: 0 15px;
+            border-right: 1px solid var(--border-color);
+            min-width: 150px;
+            text-align: center;
+        }
+        
+        .ticker-item:last-child {
+            border-right: none;
+        }
+        
+        .ticker-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .ticker-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .ticker-change {
+            font-size: 14px;
+        }
+        
         .positive {
-            color: #00ff00;
+            color: var(--positive-color);
         }
+        
         .negative {
-            color: #ff0000;
+            color: var(--negative-color);
         }
+        
         .chart-container {
-            background-color: #ffffff;
-            border-radius: 5px;
-            padding: 10px;
+            background-color: var(--card-bg-color);
+            border-radius: 4px;
+            padding: 0;
             margin-bottom: 15px;
+            overflow: hidden;
         }
+        
         .chart-img {
             width: 100%;
             height: auto;
+            display: block;
+        }
+        
+        .timeframe-selector {
+            display: flex;
+            background-color: var(--card-bg-color);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .timeframe-btn {
+            background-color: transparent;
+            border: none;
+            color: var(--text-color);
+            padding: 8px 12px;
+            cursor: pointer;
+            flex: 1;
+            text-align: center;
+            border-right: 1px solid var(--border-color);
+        }
+        
+        .timeframe-btn:last-child {
+            border-right: none;
+        }
+        
+        .timeframe-btn.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .timeframe-btn:hover:not(.active) {
+            background-color: rgba(41, 98, 255, 0.1);
+        }
+        
+        .signal-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .signal-item:last-child {
+            border-bottom: none;
+        }
+        
+        .signal-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--positive-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .signal-icon i {
+            color: white;
+            font-size: 12px;
+        }
+        
+        .signal-content {
+            flex: 1;
+        }
+        
+        .signal-symbol {
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+        
+        .signal-message {
+            margin-bottom: 5px;
+        }
+        
+        .signal-time {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .table {
+            color: var(--text-color);
+            margin-bottom: 0;
+        }
+        
+        .table thead th {
+            border-bottom: 1px solid var(--border-color);
+            border-top: none;
+            font-weight: 500;
+        }
+        
+        .table td, .table th {
+            border-top: 1px solid var(--border-color);
+            padding: 12px 15px;
+        }
+        
+        .search-container {
+            position: relative;
+            width: 300px;
+        }
+        
+        .search-input {
+            width: 100%;
+            background-color: var(--main-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px 15px 8px 35px;
+            color: var(--text-color);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 15px;
+        }
+        
+        .tab-btn {
+            padding: 10px 15px;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        
+        .tab-btn.active {
+            border-bottom: 2px solid var(--accent-color);
+            color: var(--accent-color);
+        }
+        
+        .news-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .news-item:last-child {
+            border-bottom: none;
+        }
+        
+        .news-title {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .news-description {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .news-time {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        .view-all {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: 14px;
+        }
+        
+        .view-all:hover {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container-fluid py-3">
+    <header class="header">
+        <div class="d-flex align-items-center">
+            <img src="https://via.placeholder.com/30x30" alt="Logo" class="me-3">
+            <h5 class="mb-0">StockIntel</h5>
+        </div>
+        
+        <div class="search-container mx-auto">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-input" placeholder="Search for company, sector, index or function">
+        </div>
+        
+        <div>
+            <button class="btn btn-primary btn-sm me-2">Add Trade</button>
+            <button class="btn btn-outline-secondary btn-sm">Feedback</button>
+        </div>
+    </header>
+    
+    <aside class="sidebar">
+        <div class="sidebar-icon"><i class="fas fa-chart-line"></i></div>
+        <div class="sidebar-icon"><i class="fas fa-bell"></i></div>
+        <div class="sidebar-icon"><i class="fas fa-envelope"></i></div>
+        <div class="sidebar-icon"><i class="fas fa-cog"></i></div>
+        <div class="sidebar-icon"><i class="fas fa-user"></i></div>
+    </aside>
+    
+    <main class="main-content">
         {% block content %}{% endblock %}
-    </div>
+    </main>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
