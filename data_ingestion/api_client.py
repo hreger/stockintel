@@ -5,8 +5,10 @@ from typing import Dict, Optional, List
 import os
 from dotenv import load_dotenv
 from data_ingestion.database import StockData, get_db, init_db
+from functools import lru_cache
 import time
 import json
+import redis
 from pathlib import Path
 
 class StockDataClient:
@@ -130,3 +132,27 @@ class StockDataClient:
         except Exception as e:
             print(f"Error fetching data for {symbol}: {str(e)}")
             return pd.DataFrame(columns=['open', 'high', 'low', 'close', 'volume'])
+
+
+    def __init__(self):
+        # Initialize Redis connection
+        self.redis_client = redis.Redis(host='localhost', port=6379, db=0)
+        self.cache_ttl = 3600  # 1 hour cache for most data
+        
+    @lru_cache(maxsize=100)
+    def get_stock_data(self, symbol, interval='1d'):
+        """Cached stock data retrieval"""
+        cache_key = f"{symbol}:{interval}"
+        
+        # Try getting from cache first
+        cached_data = self.redis_client.get(cache_key)
+        if cached_data:
+            return json.loads(cached_data)
+            
+        # Implement API throttling
+        time.sleep(12)  # Alpha Vantage rate limit compliance
+        
+        # Make API call and cache result
+        data = self._make_api_call(symbol, interval)
+        self.redis_client.setex(cache_key, self.cache_ttl, json.dumps(data))
+        return data
